@@ -5,8 +5,13 @@ const {
 } = require('./api/parking-spaces/model/parking-space.model');
 
 async function initDemo() {
+  await Booking.drop();
+  await ParkingSpace.drop();
+  await User.drop();
+
   // CREATE USER TABLE
-  User.sync();
+  await User.sync({ alter: true });
+
   await User.create({
     first_name: 'John',
     last_name: 'Wick',
@@ -23,15 +28,9 @@ async function initDemo() {
     license_plate: '506_MPF_03',
   });
 
-  // CREATE BOOKING TABLE
-  Booking.sync();
-  await Booking.create({
-    user_id: 1,
-    parking_space_id: 2,
-  });
-
   // CREATE PARKING SPACE TABLE
-  ParkingSpace.sync();
+  await ParkingSpace.sync({ alter: true });
+
   await ParkingSpace.create({
     floor: 1,
     number: 1,
@@ -48,5 +47,15 @@ async function initDemo() {
     floor: 2,
     number: 1,
   });
+
+  // CREATE BOOKING TABLE
+  await Booking.sync({ alter: true });
+
+  await Booking.create({
+    user_id: 1,
+    parking_space_id: 2,
+  });
 }
-initDemo();
+initDemo().catch(e => {
+  console.log(e);
+});
